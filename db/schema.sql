@@ -1,4 +1,5 @@
 -- candidates must be dropped before due to the foreign key constraint that requires the parties table to exist
+DROP TABLE IF EXISTS votes;
 DROP TABLE IF EXISTS candidates;
 DROP TABLE IF EXISTS parties;
 DROP TABLE IF EXISTS voters;
@@ -28,3 +29,14 @@ CREATE TABLE voters (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE votes (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  voter_id INTEGER NOT NULL,
+  candidate_id INTEGER NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  -- sign signifies that there must be a unique voter ID
+  CONSTRAINT uc_voter UNIQUE (voter_id),
+  -- DELETE CASCADE will delete the reference key and also delete the entire row from this table
+  CONSTRAINT fk_voter FOREIGN KEY (voter_id) REFERENCES voters(id) ON DELETE CASCADE,
+  CONSTRAINT fk_candidate FOREIGN KEY (candidate_id) REFERENCES candidates(id) ON DELETE CASCADE
+);
